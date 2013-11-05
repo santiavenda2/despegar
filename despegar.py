@@ -3,6 +3,7 @@ __author__ = 'santiago'
 
 import json
 import requests
+import datetime
 from pymongo import MongoClient
 
 client = MongoClient()
@@ -45,3 +46,17 @@ def load_cities():
         print response.url
 
     print response.status_code
+
+
+def get_flights(from_city, to_city, departurDate, adults=1, children=0, infants=0):
+    parameters = {'page': 1, 'pagesize': 5, "sort":"totalfare", "order":"asc"}
+    city_url = '{0}availability/flights/oneWay/{1}/{2}/{3}/{4}/{5}/{6}'.format(API_URL,
+        from_city, to_city, departurDate.strftime("%Y-%m-%d"), adults, children, infants)
+    response = requests.get(city_url, params=parameters)
+    if response.status_code == 200:
+        print response.json()
+    elif response.status_code == 403:
+        print response.json()["errors"]
+
+
+get_flights("EZ1", "LIM",  datetime.date(2014, 3, 1) )
